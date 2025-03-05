@@ -19,6 +19,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private static final String ERROR_KEY = "error";
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
@@ -26,11 +27,11 @@ public class AuthController {
             String response = authService.register(user);
             return ResponseEntity.ok(Map.of("message", response));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Error: " + e.getMessage()));
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of(ERROR_KEY, "Error: " + e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error inesperado en el registro."));
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of(ERROR_KEY, "Error inesperado en el registro."));
         }
     }
 
@@ -41,10 +42,10 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Error: " + e.getMessage()));
+                    .body(Map.of(ERROR_KEY, "Error: " + e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error inesperado en el inicio de sesión."));
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of(ERROR_KEY, "Error inesperado en el inicio de sesión."));
         }
     }
 }

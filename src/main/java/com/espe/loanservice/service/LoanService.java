@@ -2,6 +2,8 @@ package com.espe.loanservice.service;
 
 import com.espe.loanservice.model.Loan;
 import com.espe.loanservice.repository.LoanRepository;
+import com.espe.loanservice.repository.UserRepository;
+import com.espe.loanservice.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Calendar;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class LoanService {
 
     private final LoanRepository loanRepository;
+    private final UserRepository userRepository;
 
     public List<Loan> getAllLoans() {
         return loanRepository.findAll();
@@ -24,7 +27,21 @@ public class LoanService {
     }
 
     public Loan saveLoan(Loan loan) {
-        return loanRepository.save(loan);
+        Optional<User> userOpt = userRepository.findById(loan.getUser().getId());
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        User user = userOpt.get();
+        if (!Boolean.TRUE.equals(user.getIsSuitable())) {
+            throw new RuntimeException("User is not suitable for a loan");
+        }
+
+        Loan savedLoan = loanRepository.save(loan);
+        user.setIsSuitable(false);
+        userRepository.save(user);
+
+        return savedLoan;
     }
 
     public Loan updateLoan(String id, Loan loanDetails) {
@@ -76,6 +93,4 @@ public class LoanService {
     public void save(Loan loan) {
         loanRepository.save(loan);
     }
-
-    
 }

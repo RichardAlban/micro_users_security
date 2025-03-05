@@ -21,6 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final BankAccountService bankAccountService;
+    private final UserService userService;
 
     @Transactional
     public String register(User user) {
@@ -31,6 +32,9 @@ public class AuthService {
         user.setIsSuitable(evaluateSuitability(user));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        double maxLoanAmount = userService.calculateMaxLoanAmount(user);
+        user.setMaxLoanAmount(maxLoanAmount);
 
         User savedUser = userRepository.save(user);
 

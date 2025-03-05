@@ -25,6 +25,7 @@ public class Loan {
     private double monthlyPayment;
     private double remainingBalance;
     private int paymentsMade;
+    private double totalToPay;
 
     @ManyToOne
     private User user;
@@ -48,6 +49,8 @@ public class Loan {
         } else {
             this.monthlyPayment = (amount / term) + (remainingBalance * monthlyRate);
         }
+
+        this.totalToPay = this.monthlyPayment * term;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
@@ -77,6 +80,13 @@ public class Loan {
 
         if ("MA".equalsIgnoreCase(method)) {
             this.monthlyPayment = (remainingBalance / (term - paymentsMade)) + (remainingBalance * interestRate);
+        }
+
+        this.totalToPay = remainingBalance + (remainingBalance * interestRate * getRemainingMonths());
+
+        if (remainingBalance <= 0) {
+            this.approved = false;
+            this.user.setIsSuitable(true);
         }
     }
 }

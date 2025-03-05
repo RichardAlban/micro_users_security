@@ -53,6 +53,12 @@ public class User {
 
     private Boolean isSuitable;
 
+    @Column(name = "recovery_code")
+    private String recoveryCode;
+
+    @Column(name = "max_loan_amount")
+    private double maxLoanAmount;
+
     @PrePersist
     private void generateId() {
         IdGenerator idGenerator = new IdGenerator();

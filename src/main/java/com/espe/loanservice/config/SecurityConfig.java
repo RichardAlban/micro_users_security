@@ -29,7 +29,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:4200"));
+                config.setAllowedOrigins(List.of("http://localhost", "http://localhost:4200"));
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
                 config.setAllowCredentials(true);
@@ -40,7 +40,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole(ROLE_ADMIN)
                 .requestMatchers("/api/users/**").permitAll()
                 .requestMatchers("/api/bankaccounts/**").hasRole(ROLE_USER)
-                .requestMatchers("/api/loans/**").hasRole(ROLE_USER).requestMatchers("/api/transactions/**").hasRole(ROLE_USER)
+                .requestMatchers("/api/loans/**").hasRole(ROLE_USER)
+                .requestMatchers("/api/transactions/**").hasRole(ROLE_USER)
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
